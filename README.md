@@ -1,2 +1,2 @@
-# flutter_play_ground
+# playground_flutter
 storage of personal exercises
