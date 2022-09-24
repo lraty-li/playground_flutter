@@ -10,17 +10,22 @@ class DeTailPage extends StatelessWidget {
   Widget build(BuildContext context) {
   var heroParam = ModalRoute.of(context)!.settings.arguments;
   heroParam as HeroParam;
-    return Scaffold(
-      backgroundColor: Color.fromARGB(100, 39, 29, 29),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(50),
-          child: Hero(tag: heroParam.tag, child: Card(
-            child: Expanded(
-              child: Container(
-                color: heroParam.color,
-              ),
-            ),)),
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).pop();
+      },
+      child: Scaffold(
+        backgroundColor: Color.fromARGB(100, 39, 29, 29),
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(50),
+            child: Hero(tag: heroParam.tag, child: Card(
+              child: Expanded(
+                child: Container(
+                  color: heroParam.color,
+                ),
+              ),)),
+          ),
         ),
       ),
     );
