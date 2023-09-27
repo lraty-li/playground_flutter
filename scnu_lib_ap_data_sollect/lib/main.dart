@@ -143,6 +143,7 @@ class _MyAppState extends State<MyApp> {
                 '${appExternStorage!.path}${Platform.pathSeparator}${coodinateX}_$coodinateY.json');
             outputJsonFile.createSync();
             outputJsonFile.writeAsString(outputJson);
+            allAPdata.clear();
           }
         });
         break;
