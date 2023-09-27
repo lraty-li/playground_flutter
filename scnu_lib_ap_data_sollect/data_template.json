@@ -1,0 +1,26 @@
+{
+  "coordinateX": 1,
+  "coordinateY": 2,
+  "data": [
+    {
+      "00:00:00:00:00:00": {
+        "ssid": "SCNU-NET",
+        "level": -58
+      },
+      "00:00:00:00:00:01": {
+        "ssid": "SCNU-NET-AUTO",
+        "level": -58
+      }
+    },
+    {
+      "00:00:00:00:00:00": {
+        "ssid": "SCNU-NET",
+        "level": -58
+      },
+      "00:00:00:00:00:01": {
+        "ssid": "SCNU-NET-AUTO",
+        "level": -58
+      }
+    }
+  ]
+}
