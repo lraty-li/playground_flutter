@@ -104,7 +104,7 @@ class _MyAppState extends State<MyApp> {
 
     showToast('scan finish');
     if (await Vibration.hasVibrator() != null) {
-      // Vibration.vibrate(); 
+      Vibration.vibrate(); 
     }
 
     setState(() {});
@@ -130,7 +130,7 @@ class _MyAppState extends State<MyApp> {
       // if (result.bssid.contains('60:0b:03:ef:3d:f1')) {
       // apData[result.bssid] = {"ssid:": result.ssid, "level": result.level};
       // }
-      apData[result.bssid] = {"ssid:": result.ssid, "level": result.level};
+      apData[result.bssid] = {"ssid": result.ssid, "level": result.level};
     }
     allAPdata.add(apData);
     return allAPdata;
