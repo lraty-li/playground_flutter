@@ -62,29 +62,49 @@ class _MyAppState extends State<MyApp> {
   List<Map<String, Map>> allAPdata = [];
 
   final TextEditingController _coodinateXTxtCtl =
-      TextEditingController(text: '');
+      TextEditingController(text: '1');
   final TextEditingController _coodinateYTxtCtl =
-      TextEditingController(text: '');
-  final TextEditingController _roundsTxtCtl = TextEditingController(text: '10');
+      TextEditingController(text: '1');
+  final TextEditingController _roundsTxtCtl = TextEditingController(text: '20');
   final TextEditingController _intervalTxtCtl =
       TextEditingController(text: '3');
   int rounds = 0;
 
   Future<void> huntWiFis() async {
+    showToast('scan started');
     rounds = int.parse(_roundsTxtCtl.text);
     final int interval = int.parse(_intervalTxtCtl.text);
-    for (rounds-=1; rounds >= 0; rounds--) {
+    for (; rounds > 0; rounds--) {
+      setState(() {});
       bool startScanSuccess = await _startScan();
       if (startScanSuccess) {
-        _getScannedResults(rounds);
         await Future.delayed(
             Duration(seconds: interval)); //intervals later to scan next time
+        accessPoints = await _getScannedResults();
+        allAPdata = _fillInData(accessPoints, allAPdata);
+
+        if (rounds == 1) {
+          String coodinateXTxt = _coodinateXTxtCtl.text; 
+          String coodinateYTxt = _coodinateYTxtCtl.text; 
+          Map<String, dynamic> output = {
+            "coordinateX": coodinateXTxt,
+            "coordinateY": coodinateYTxt,
+            "data": allAPdata
+          };
+          String outputJson = jsonEncode(output);
+          File outputJsonFile = File(
+              '${appExternStorage!.path}${Platform.pathSeparator}${coodinateXTxt}_$coodinateYTxt.json');
+          outputJsonFile.createSync();
+          outputJsonFile.writeAsString(outputJson);
+          allAPdata.clear();
+        }
+        //but getting result not delayed?
       }
     }
 
     showToast('scan finish');
     if (await Vibration.hasVibrator() != null) {
-      Vibration.vibrate();
+      Vibration.vibrate(); 
     }
 
     setState(() {});
@@ -110,48 +130,25 @@ class _MyAppState extends State<MyApp> {
       // if (result.bssid.contains('60:0b:03:ef:3d:f1')) {
       // apData[result.bssid] = {"ssid:": result.ssid, "level": result.level};
       // }
-      apData[result.bssid] = {"ssid:": result.ssid, "level": result.level};
+      apData[result.bssid] = {"ssid": result.ssid, "level": result.level};
     }
     allAPdata.add(apData);
     return allAPdata;
   }
 
-  void _getScannedResults(int remainRound) async {
+  Future<List<WiFiAccessPoint>> _getScannedResults() async {
+    List<WiFiAccessPoint> accessPoints = [];
     final can =
         await WiFiScan.instance.canGetScannedResults(askPermissions: true);
     switch (can) {
       case CanGetScannedResults.yes:
-        // listen to onScannedResultsAvailable stream
-        subscription =
-            WiFiScan.instance.onScannedResultsAvailable.listen((results) {
-          setState(() {
-            accessPoints = results;
-          });
-
-          allAPdata = _fillInData(accessPoints, allAPdata);
-
-          if (remainRound == 0) {
-            int coodinateX = int.parse(_coodinateXTxtCtl.text);
-            int coodinateY = int.parse(_coodinateYTxtCtl.text);
-            Map<String, dynamic> output = {
-              "coordinateX": coodinateX,
-              "coordinateY": coodinateY,
-              "data": allAPdata
-            };
-            String outputJson = jsonEncode(output);
-            File outputJsonFile = File(
-                '${appExternStorage!.path}${Platform.pathSeparator}${coodinateX}_$coodinateY.json');
-            outputJsonFile.createSync();
-            outputJsonFile.writeAsString(outputJson);
-            allAPdata.clear();
-          }
-        });
-        break;
+        accessPoints = await WiFiScan.instance.getScannedResults();
       default:
         {
           print("can't get result");
         }
     }
+    return accessPoints;
   }
 
   @override
